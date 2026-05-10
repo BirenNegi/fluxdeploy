@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -11,6 +10,7 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 
 Base.metadata.create_all(bind=engine)
 
+
 def override_get_db():
     db = TestingSessionLocal()
     try:
@@ -18,13 +18,16 @@ def override_get_db():
     finally:
         db.close()
 
+
 app.dependency_overrides[get_db] = override_get_db
 client = TestClient(app)
+
 
 def test_health():
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
+
 
 def test_create_and_get_item():
     payload = {"name": "Widget", "description": "A test widget", "price": 9.99}
@@ -35,6 +38,7 @@ def test_create_and_get_item():
     r2 = client.get(f"/items/{item_id}")
     assert r2.status_code == 200
     assert r2.json()["name"] == "Widget"
+
 
 def test_get_missing_item():
     r = client.get("/items/99999")

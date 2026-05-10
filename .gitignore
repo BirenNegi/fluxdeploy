@@ -7,4 +7,4 @@ venv/
 *.egg-info/
 .pytest_cache/
 test.db
-.DS_Store
+.DS_Storetest.db
