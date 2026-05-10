@@ -5,11 +5,14 @@ from .database import engine, Base, Item, get_db
 from .models import ItemCreate, ItemResponse
 from typing import List
 
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI(title="FluxDeploy API", version="1.0.0")
 
 Instrumentator().instrument(app).expose(app)
+
+
+@app.on_event("startup")
+def startup():
+    Base.metadata.create_all(bind=engine)
 
 
 @app.get("/health")
