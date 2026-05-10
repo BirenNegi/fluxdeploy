@@ -40,8 +40,7 @@ jobs:
 
       - name: Lint with flake8
         run: |
-          flake8 app/ --max-line-length=100 --exclude=app/tests/ --statistics
-          flake8 app/tests/ --max-line-length=120 --statistics
+          flake8 app/ --max-line-length=100 --exclude=venv --statistics
 
       - name: Run tests with coverage
         run: |
@@ -75,9 +74,8 @@ jobs:
         with:
           context: .
           push: false
+          load: true
           tags: fluxdeploy:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Run Trivy security scan
         uses: aquasecurity/trivy-action@master
