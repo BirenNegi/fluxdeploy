@@ -8,12 +8,14 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
+
 class Item(Base):
     __tablename__ = "items"
-    id       = Column(Integer, primary_key=True, index=True)
-    name     = Column(String, nullable=False)
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
     description = Column(String, nullable=True)
-    price    = Column(Float, nullable=False)
+    price = Column(Float, nullable=False)
+
 
 def get_db():
     db = SessionLocal()

@@ -11,13 +11,16 @@ app = FastAPI(title="FluxDeploy API", version="1.0.0")
 
 Instrumentator().instrument(app).expose(app)
 
+
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "fluxdeploy"}
 
+
 @app.get("/items", response_model=List[ItemResponse])
 def list_items(db: Session = Depends(get_db)):
     return db.query(Item).all()
+
 
 @app.post("/items", response_model=ItemResponse, status_code=201)
 def create_item(item: ItemCreate, db: Session = Depends(get_db)):
@@ -27,12 +30,14 @@ def create_item(item: ItemCreate, db: Session = Depends(get_db)):
     db.refresh(db_item)
     return db_item
 
+
 @app.get("/items/{item_id}", response_model=ItemResponse)
 def get_item(item_id: int, db: Session = Depends(get_db)):
     item = db.query(Item).filter(Item.id == item_id).first()
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
+
 
 @app.delete("/items/{item_id}", status_code=204)
 def delete_item(item_id: int, db: Session = Depends(get_db)):
