@@ -4,16 +4,10 @@ kind: Kustomization
 namespace: fluxdeploy-staging
 
 resources:
-  - ../../base/configmap.yaml
-  - ../../base/deployment.yaml
-  - ../../base/service.yaml
-  - ../../base/hpa.yaml
+  - ../../base
 
 patches:
   - patch: |-
-      - op: replace
-        path: /metadata/namespace
-        value: fluxdeploy-staging
       - op: replace
         path: /data/APP_ENV
         value: "staging"
