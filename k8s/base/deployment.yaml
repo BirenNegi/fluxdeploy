@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluxdeploy-api
+  namespace: fluxdeploy-dev
+  labels:
+    app: fluxdeploy-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fluxdeploy-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: fluxdeploy-api
+    spec:
+      containers:
+        - name: api
+          image: 042608219714.dkr.ecr.ap-south-1.amazonaws.com/fluxdeploy-dev:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://fluxadmin:FluxDeploy2024!@fluxdeploy-dev-postgres.cv6ya4ouyquk.ap-south-1.rds.amazonaws.com:5432/fluxdb"
+            - name: APP_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: fluxdeploy-config
+                  key: APP_ENV
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 3
+      terminationGracePeriodSeconds: 30
